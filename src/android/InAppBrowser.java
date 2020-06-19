@@ -120,8 +120,9 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String FOOTER_COLOR = "footercolor";
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
+    private static final String CLOSE_BUTTON_PADDING = "closebuttonpadding";
 
-    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR);
+    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, CLOSE_BUTTON_PADDING);
 
     private InAppBrowserDialog dialog;
     private WebView inAppWebView;
@@ -142,6 +143,7 @@ public class InAppBrowser extends CordovaPlugin {
     private final static int FILECHOOSER_REQUESTCODE_LOLLIPOP = 2;
     private String closeButtonCaption = "";
     private String closeButtonColor = "";
+    private String[] closeButtonPadding;
     private boolean leftToRight = false;
     private int toolbarColor = android.graphics.Color.LTGRAY;
     private boolean hideNavigationButtons = false;
@@ -721,6 +723,10 @@ public class InAppBrowser extends CordovaPlugin {
             if (fullscreenSet != null) {
                 fullscreen = fullscreenSet.equals("yes") ? true : false;
             }
+            String closeButtonPaddingSet = features.get(CLOSE_BUTTON_PADDING);
+            if(closeButtonPaddingSet != null) {
+                closeButtonPadding = closeButtonPaddingSet.split("\\|");
+            }
         }
 
         final CordovaWebView thatWebView = this.webView;
@@ -761,6 +767,14 @@ public class InAppBrowser extends CordovaPlugin {
                     Drawable closeIcon = activityRes.getDrawable(closeResId);
                     if (closeButtonColor != "") close.setColorFilter(android.graphics.Color.parseColor(closeButtonColor));
                     close.setImageDrawable(closeIcon);
+                    if(closeButtonPadding != null && closeButtonPadding.length == 4) {
+                        close.setPadding(
+                                this.dpToPixels(Integer.parseInt(closeButtonPadding[0])),
+                                this.dpToPixels(Integer.parseInt(closeButtonPadding[1])),
+                                this.dpToPixels(Integer.parseInt(closeButtonPadding[2])),
+                                this.dpToPixels(Integer.parseInt(closeButtonPadding[3]))
+                        );
+                    }
                     close.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     if (Build.VERSION.SDK_INT >= 16)
                         close.getAdjustViewBounds();
