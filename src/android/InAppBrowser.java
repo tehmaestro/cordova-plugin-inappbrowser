@@ -121,8 +121,9 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
     private static final String CLOSE_BUTTON_PADDING = "closebuttonpadding";
+    private static final String CLOSE_BUTTON_ALPHA = "closebuttonalpha";
 
-    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, CLOSE_BUTTON_PADDING);
+    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, CLOSE_BUTTON_PADDING, CLOSE_BUTTON_ALPHA);
 
     private InAppBrowserDialog dialog;
     private WebView inAppWebView;
@@ -144,6 +145,7 @@ public class InAppBrowser extends CordovaPlugin {
     private String closeButtonCaption = "";
     private String closeButtonColor = "";
     private String[] closeButtonPadding;
+    private int closeButtonAlpha = -1;
     private boolean leftToRight = false;
     private int toolbarColor = android.graphics.Color.LTGRAY;
     private boolean hideNavigationButtons = false;
@@ -727,6 +729,10 @@ public class InAppBrowser extends CordovaPlugin {
             if(closeButtonPaddingSet != null) {
                 closeButtonPadding = closeButtonPaddingSet.split("\\|");
             }
+            String closeButtonAlphaSet = features.get(CLOSE_BUTTON_ALPHA);
+            if(closeButtonAlphaSet != null) {
+                closeButtonAlpha = Integer.parseInt(closeButtonAlphaSet);
+            }
         }
 
         final CordovaWebView thatWebView = this.webView;
@@ -767,6 +773,10 @@ public class InAppBrowser extends CordovaPlugin {
                     Drawable closeIcon = activityRes.getDrawable(closeResId);
                     if (closeButtonColor != "") close.setColorFilter(android.graphics.Color.parseColor(closeButtonColor));
                     close.setImageDrawable(closeIcon);
+                    if (closeButtonAlpha >= 0) {
+                        close.setImageAlpha(closeButtonAlpha);
+                    }
+
                     if(closeButtonPadding != null && closeButtonPadding.length == 4) {
                         close.setPadding(
                                 this.dpToPixels(Integer.parseInt(closeButtonPadding[0])),
